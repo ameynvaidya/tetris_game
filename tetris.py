@@ -5,6 +5,7 @@ import pygame
 from pygame.locals import *
 
 import lib.board as board
+import lib.piece as piece
 import ui.board as ui_board
 
 SCREEN_HEIGHT = 480
@@ -20,40 +21,41 @@ class TetrisGame:
         self.display_size = SCREEN_WIDTH, SCREEN_HEIGHT
         self._board = board.Board(width, height)
         # set some random blocks on board
-        self._board.set_grid(0, 0, 1)
-        self._board.set_grid(1, 0, 1)
-        self._board.set_grid(2, 0, 1)
-        self._board.set_grid(3, 0, 1)
+        self._board.set_piece(0, 0, piece.Piece.get_pieces()[0].nextRotation())
+        # self._board.set_grid(0, 0, 1)
+        # self._board.set_grid(1, 0, 1)
+        # self._board.set_grid(2, 0, 1)
+        # self._board.set_grid(3, 0, 1)
 
-        self._board.set_grid(0, 1, 2)
-        self._board.set_grid(1, 1, 2)
-        self._board.set_grid(2, 1, 2)
-        self._board.set_grid(0, 2, 2)
+        # self._board.set_grid(0, 1, 2)
+        # self._board.set_grid(1, 1, 2)
+        # self._board.set_grid(2, 1, 2)
+        # self._board.set_grid(0, 2, 2)
 
-        self._board.set_grid(3, 1, 3)
-        self._board.set_grid(3, 2, 3)
-        self._board.set_grid(3, 3, 3)
-        self._board.set_grid(4, 1, 3)
+        # self._board.set_grid(3, 1, 3)
+        # self._board.set_grid(3, 2, 3)
+        # self._board.set_grid(3, 3, 3)
+        # self._board.set_grid(4, 1, 3)
 
-        self._board.set_grid(5, 2, 4)
-        self._board.set_grid(5, 3, 4)
-        self._board.set_grid(6, 2, 4)
-        self._board.set_grid(6, 3, 4)
+        # self._board.set_grid(5, 2, 4)
+        # self._board.set_grid(5, 3, 4)
+        # self._board.set_grid(6, 2, 4)
+        # self._board.set_grid(6, 3, 4)
 
-        self._board.set_grid(0, 4, 5)
-        self._board.set_grid(0, 3, 5)
-        self._board.set_grid(1, 3, 5)
-        self._board.set_grid(1, 2, 5)
+        # self._board.set_grid(0, 4, 5)
+        # self._board.set_grid(0, 3, 5)
+        # self._board.set_grid(1, 3, 5)
+        # self._board.set_grid(1, 2, 5)
 
-        self._board.set_grid(4, 0, 6)
-        self._board.set_grid(5, 0, 6)
-        self._board.set_grid(6, 0, 6)
-        self._board.set_grid(5, 1, 6)
+        # self._board.set_grid(4, 0, 6)
+        # self._board.set_grid(5, 0, 6)
+        # self._board.set_grid(6, 0, 6)
+        # self._board.set_grid(5, 1, 6)
 
-        self._board.set_grid(6, 1, 7)
-        self._board.set_grid(7, 1, 7)
-        self._board.set_grid(7, 0, 7)
-        self._board.set_grid(8, 0, 7)
+        # self._board.set_grid(6, 1, 7)
+        # self._board.set_grid(7, 1, 7)
+        # self._board.set_grid(7, 0, 7)
+        # self._board.set_grid(8, 0, 7)
 
     def on_init(self):
         pygame.init()

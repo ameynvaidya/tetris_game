@@ -1,4 +1,5 @@
 from typing import List
+import lib.piece as piece
 
 class Board:
     def __init__(self, width=10, height=20):
@@ -16,8 +17,9 @@ class Board:
     def width(self) -> int:
         return self._width
 
-    def set_piece(self, x: int, y: int, type: int) -> None:
-        pass
+    def set_piece(self, x: int, y: int, piece: piece.Piece) -> None:
+        for point in piece.getBody():
+            self.set_grid(x + point.getX(), y +  point.getY(), piece.getColor())
 
     def set_grid(self, x: int, y: int, color: int) -> None:
         if x < 0 or x > self._width:
