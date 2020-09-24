@@ -22,15 +22,19 @@ class Board:
             self.set_grid(x + point.getX(), y +  point.getY(), piece.getColor())
 
     def set_grid(self, x: int, y: int, color: int) -> None:
-        if x < 0 or x > self._width:
-            raise Exception("X is out of range")
-        if y < 0 or y > self._height:
-            raise Exception("Y is out of range")
-        self._grid[y * self._width + x] = color
+        if (x >= 0 or x < self._width) and (y >= 0 or y < self._height):
+            self._grid[y * self._width + x] = color
     
     def get_grid(self, x: int, y: int) -> int:
-        if x < 0 or x > self._width:
-            raise Exception("X is out of range")
-        if y < 0 or y > self._height:
-            raise Exception("Y is out of range")
-        return self._grid[y * self._width + x]
+        if (x >= 0 or x < self._width) and (y >= 0 or y < self._height):
+            return self._grid[y * self._width + x]
+        return 0
+
+    def fill_fake_data(self) -> None:
+        self.set_piece(0, -1, piece.Piece.get_pieces()[0])
+        self.set_piece(0, 0, piece.Piece.get_pieces()[1].nextRotation().nextRotation())
+        self.set_piece(2, 1, piece.Piece.get_pieces()[2].nextRotation().nextRotation().nextRotation())
+        self.set_piece(4, -1, piece.Piece.get_pieces()[5].nextRotation().nextRotation())
+        self.set_piece(6, 0, piece.Piece.get_pieces()[6])
+        self.set_piece(4, 1, piece.Piece.get_pieces()[3])
+        self.set_piece(-1, 2, piece.Piece.get_pieces()[4].nextRotation())
