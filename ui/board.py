@@ -1,6 +1,6 @@
 import pygame
 import lib.board as board
-
+import lib.piece as piece
 class BoardSprite(pygame.sprite.Sprite):
     def __init__(self, board: board.Board, screen_width: int, screen_height: int):
         super(BoardSprite, self).__init__() 
@@ -8,23 +8,13 @@ class BoardSprite(pygame.sprite.Sprite):
         height = board.height()
 
         self.board_cell_width = int(screen_height * 0.9 / height)
-        
+
         self._board_display_width = self.board_cell_width * width
         self._board_display_height = self.board_cell_width * height
         self.surf = pygame.Surface(
             (self._board_display_width, self._board_display_height))
         self.rect = self.surf.get_rect()
 
-        piece_color = {
-            1: (0, 255, 255),  # aqua Stick
-            2: (0, 0, 255),   # blue  L Inverse
-            3: (255, 165, 0),  # orange L
-            4: (255, 255, 0),  # yellow Square
-            5: (0, 255, 0),  # green S
-            6: (217, 49, 255),  # purple Pyramid
-            7: (255, 0, 0),  # red S Inverse
-            0: (0, 0, 0),  # black blank
-        }
         rect_left = self.surf.get_rect().left
         rect_top = self.surf.get_rect().top
         rect_bottom = self.surf.get_rect().bottom
@@ -43,7 +33,7 @@ class BoardSprite(pygame.sprite.Sprite):
                                 * self.board_cell_width)
                     pygame.draw.rect(
                         self.surf,
-                        piece_color[board.get_grid(x, y)],
+                        piece.Piece.piece_color_map()[board.get_grid(x, y)],
                         (cell_left, cell_top, self.board_cell_width, self.board_cell_width))
 
         # inside grid (for reference)

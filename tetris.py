@@ -21,8 +21,8 @@ class TetrisGame:
         self._height = height
         self.display_size = SCREEN_WIDTH, SCREEN_HEIGHT
         self._board = board.Board(width, height)
-        # set some random blocks on board
-        self._board.fill_fake_data()
+        # # set some random blocks on board
+        # self._board.fill_fake_data()
 
     def on_init(self):
         pygame.init()
@@ -32,7 +32,9 @@ class TetrisGame:
         self._board_surf = ui_board.BoardSprite(
             self._board, SCREEN_WIDTH, SCREEN_HEIGHT)
 
-        self._piece_surf = ui_piece.PieceSprite(self._board_surf.board_cell_width)
+        self._piece_surf = ui_piece.PieceSprite(
+            self._board_surf.board_cell_width, 
+            piece.Piece.get_pieces()[5])
 
     def on_event(self, event):
         if event.type == pygame.QUIT:
@@ -44,10 +46,13 @@ class TetrisGame:
     def on_render(self):
         board_left_top_x = (SCREEN_WIDTH - self._board_surf.width()) / 2
         board_left_top_y = (SCREEN_HEIGHT - self._board_surf.height()) / 2
+
         self._display_surf.blit(
             self._board_surf.surf,
             (board_left_top_x, board_left_top_y))
-        self._display_surf.blit(self._piece_surf.surf, (board_left_top_x, board_left_top_y))
+        self._display_surf.blit(
+            self._piece_surf.surf, 
+            (board_left_top_x, board_left_top_y))
         pygame.display.flip()
 
     def on_cleanup(self):
