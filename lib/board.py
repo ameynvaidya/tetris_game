@@ -1,6 +1,14 @@
 from typing import List
 import lib.piece as piece
-
+'''
+Board coordinate system
+     |   |   |   |   |   |
+     |   |   |   |   |   |
+y=3  |   |   |   |   |   |
+y=1  |   |   |   |   |   |
+y=0  |   |   |   |   |   |
+      x=0 x=1 x=2                                              
+'''
 class Board:
     def __init__(self, width=10, height=20):
         super().__init__()
@@ -20,6 +28,22 @@ class Board:
     def set_piece(self, x: int, y: int, piece: piece.Piece) -> None:
         for point in piece.getBody():
             self.set_grid(x + point.getX(), y +  point.getY(), piece.getColor())
+
+    def is_piece_out_of_bound(self, x: int, y: int, piece: piece.Piece) -> bool:
+        for p in piece.getBody():
+            if (x + p.getX() < 0 or x + p.getX() >= self._width):
+                return True
+            if (y + p.getY() < 0 or y + p.getY() >= self._height):
+                return True
+        return False
+
+    def did_piece_collided_with_body(self, x: int, y: int, piece: piece.Piece) -> bool:
+        for p in piece.getBody():
+            p_x = x + p.getX()
+            p_y = y + p.getY()
+            if (self.get_grid(p_x, p_y) != 0):
+                return True
+        return False
 
     def set_grid(self, x: int, y: int, color: int) -> None:
         if (x >= 0 or x < self._width) and (y >= 0 or y < self._height):
