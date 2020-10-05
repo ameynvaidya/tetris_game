@@ -16,8 +16,11 @@ class Board:
         self._height = height
         # grid is represented as one dimensional list
         self._grid = []
+        self.row_stats = []
         for _ in range(height * width):
             self._grid.append(0)
+        for i in range(height):
+            self.row_stats.append(0)
         
     def height(self) -> int:
         return self._height
@@ -48,6 +51,7 @@ class Board:
     def set_grid(self, x: int, y: int, color: int) -> None:
         if (x >= 0 or x < self._width) and (y >= 0 or y < self._height):
             self._grid[y * self._width + x] = color
+            self.row_stats[y] = self.row_stats[y] + 1
     
     def get_grid(self, x: int, y: int) -> int:
         if (x >= 0 or x < self._width) and (y >= 0 or y < self._height):

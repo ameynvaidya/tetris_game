@@ -18,6 +18,7 @@ import lib.board as board
 import lib.piece as piece
 import ui.board as ui_board
 import ui.piece as ui_piece
+import ui.debug_board as ui_debug_board
 
 SCREEN_HEIGHT = 480
 SCREEN_WIDTH = 640
@@ -56,9 +57,15 @@ class TetrisGame:
         pygame.display.set_caption("Tetris")
         self._board_surf = ui_board.BoardSprite(
             self._board, SCREEN_WIDTH, SCREEN_HEIGHT)
+        self._debug_board_surf = ui_debug_board.DebugBoardSprite(
+            self._board_surf.board_cell_width, self._board)
 
         # Initialize the location of the board and the piece to be in the
         # center of the screen
+        debug_board_left_top_x = (SCREEN_WIDTH - self._debug_board_surf.rect.width) / 2
+        debug_board_left_top_y = (SCREEN_HEIGHT - self._debug_board_surf.rect.height) / 2
+        self._debug_board_surf.rect.move_ip(debug_board_left_top_x, debug_board_left_top_y)
+
         board_left_top_x = (SCREEN_WIDTH - self._board_surf.width()) / 2
         board_left_top_y = (SCREEN_HEIGHT - self._board_surf.height()) / 2
         self._board_surf.rect.move_ip(board_left_top_x, board_left_top_y)
@@ -82,6 +89,7 @@ class TetrisGame:
         if (self._board.is_piece_out_of_bound(self._piece_x, self._piece_y - 1, self._piece) or 
             self._board.did_piece_collided_with_body(self._piece_x, self._piece_y - 1, self._piece)):
             self._board.set_piece(self._piece_x, self._piece_y, self._piece)
+            self._debug_board_surf.update(self._board_surf.board_cell_width, self._board)
             self._board_surf.update(self._board)
             self.piece_init()
             return
@@ -138,6 +146,7 @@ class TetrisGame:
         pass
 
     def on_render(self):
+        self._display_surf.blit(self._debug_board_surf.surf, self._debug_board_surf.rect)
         self._display_surf.blit(self._board_surf.surf, self._board_surf.rect)
         self._display_surf.blit(self._piece_surf.surf, self._piece_surf.rect)
         pygame.display.flip()
