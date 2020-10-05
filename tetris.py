@@ -11,6 +11,7 @@ from pygame.locals import (
     K_ESCAPE,
     KEYDOWN,
     K_x,
+    K_p,
     QUIT,
 )
 
@@ -28,6 +29,7 @@ FRAMERATE = 30
 class TetrisGame:
     def __init__(self, width=10, height=20):
         self._running = True
+        self._paused = False
         self._display_surf = None
         self.__piece_surf = None
         self._clock = pygame.time.Clock()
@@ -137,8 +139,11 @@ class TetrisGame:
                 self.move_piece_right()
             if event.key == K_x or event.key == K_UP:
                 self.rotate_piece()
+            if event.key == K_p:
+                self._paused = ~self._paused
         elif event.type == self._PIECEDROP:
-            self.move_piece_down()
+            if not self._paused:
+                self.move_piece_down()
         elif event.type == QUIT:
             self._running = False
 

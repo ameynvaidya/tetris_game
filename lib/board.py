@@ -17,6 +17,7 @@ class Board:
         # grid is represented as one dimensional list
         self._grid = []
         self.row_stats = []
+        self._need_to_clear_rows = False
         for _ in range(height * width):
             self._grid.append(0)
         for i in range(height):
@@ -31,6 +32,36 @@ class Board:
     def set_piece(self, x: int, y: int, piece: piece.Piece) -> None:
         for point in piece.getBody():
             self.set_grid(x + point.getX(), y +  point.getY(), piece.getColor())
+        # for r in self.row_stats:
+        #     if r == 10:
+        #         self._grid = []
+        #         self.row_stats = []
+        #         for _ in range(self._height * self._width):
+        #             self._grid.append(0)
+        #         for i in range(self._height):
+        #             self.row_stats.append(0)
+        if self._need_to_clear_rows:
+            self.clear_rows()
+
+    def clear_rows(self):
+        to_row = 0
+        temp_grid = []
+        temp_row_stats = []
+        for _ in range(self._height * self._width):
+            temp_grid.append(0)
+        for i in range(self._height):
+            temp_row_stats.append(0)
+
+        for from_row in range(self._height):
+            if self.row_stats[from_row] != self._width:
+                temp_row_stats[to_row] = self.row_stats[from_row]
+                for i in range(self._width):
+                    temp_grid[to_row * self._width + i] = self._grid[from_row * self._width + i]
+                to_row = to_row + 1
+        self._grid = temp_grid
+        self.row_stats = temp_row_stats
+        self._need_to_clear_rows = False
+
 
     def is_piece_out_of_bound(self, x: int, y: int, piece: piece.Piece) -> bool:
         for p in piece.getBody():
@@ -52,6 +83,8 @@ class Board:
         if (x >= 0 or x < self._width) and (y >= 0 or y < self._height):
             self._grid[y * self._width + x] = color
             self.row_stats[y] = self.row_stats[y] + 1
+            if self.row_stats[y] == self._width:
+                self._need_to_clear_rows = True
     
     def get_grid(self, x: int, y: int) -> int:
         if (x >= 0 or x < self._width) and (y >= 0 or y < self._height):
