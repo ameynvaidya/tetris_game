@@ -32,14 +32,6 @@ class Board:
     def set_piece(self, x: int, y: int, piece: piece.Piece) -> None:
         for point in piece.getBody():
             self.set_grid(x + point.getX(), y +  point.getY(), piece.getColor())
-        # for r in self.row_stats:
-        #     if r == 10:
-        #         self._grid = []
-        #         self.row_stats = []
-        #         for _ in range(self._height * self._width):
-        #             self._grid.append(0)
-        #         for i in range(self._height):
-        #             self.row_stats.append(0)
         if self._need_to_clear_rows:
             self.clear_rows()
 
@@ -78,6 +70,14 @@ class Board:
             if (self.get_grid(p_x, p_y) != 0):
                 return True
         return False
+
+    def drop_height(self, x: int, piece: piece.Piece) -> int:
+        for y in range(-4, self._height):
+            if (self.is_piece_out_of_bound(x, y, piece)):
+                continue
+            if not self.did_piece_collided_with_body(x, y, piece):
+                return y
+        return self._height
 
     def set_grid(self, x: int, y: int, color: int) -> None:
         if (x >= 0 or x < self._width) and (y >= 0 or y < self._height):

@@ -43,6 +43,7 @@ class Piece:
             6: (217, 49, 255),  # purple Pyramid
             7: (255, 0, 0),  # red S Inverse
             0: (0, 0, 0),  # black blank
+            -1: (80, 80, 80),  # grey
         }
 
     @staticmethod
