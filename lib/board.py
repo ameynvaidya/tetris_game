@@ -71,12 +71,11 @@ class Board:
                 return True
         return False
 
-    def drop_height(self, x: int, piece: piece.Piece) -> int:
-        for y in range(-4, self._height):
-            if (self.is_piece_out_of_bound(x, y, piece)):
-                continue
-            if not self.did_piece_collided_with_body(x, y, piece):
-                return y
+    def drop_height(self, x: int, current_y: int, piece: piece.Piece) -> int:
+        for y in range(current_y, -4, -1):
+            if (self.is_piece_out_of_bound(x, y, piece) or 
+                self.did_piece_collided_with_body(x, y, piece)):
+                return y + 1
         return self._height
 
     def set_grid(self, x: int, y: int, color: int) -> None:

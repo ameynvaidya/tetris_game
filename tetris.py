@@ -45,10 +45,7 @@ class TetrisGame:
         self._height = height
         self.display_size = SCREEN_WIDTH, SCREEN_HEIGHT
         self._board = board.Board(width, height)
-        # set some random blocks on board
-        self._board.fill_fake_data()
 
-        # random piece on the tetris board
         self._piece = None
         self._piece_x = 4
         self._piece_y = 10
@@ -70,19 +67,20 @@ class TetrisGame:
         self._display_surf = pygame.display.set_mode(
             self.display_size, pygame.HWSURFACE | pygame.DOUBLEBUF)
         pygame.display.set_caption("Tetris")
+
+
         self._board_surf = ui_board.BoardSprite(
             self._board, SCREEN_WIDTH, SCREEN_HEIGHT)
         self._debug_board_surf = ui_debug_board.DebugBoardSprite(
             self._board_surf.board_cell_width, self._board)
 
-        # Initialize the location of the board and the piece to be in the
-        # center of the screen
         debug_board_left_top_x = (
             SCREEN_WIDTH - self._debug_board_surf.rect.width) / 2
         debug_board_left_top_y = (
             SCREEN_HEIGHT - self._debug_board_surf.rect.height) / 2
         self._debug_board_surf.rect.move_ip(
             debug_board_left_top_x, debug_board_left_top_y)
+
 
         board_left_top_x = (SCREEN_WIDTH - self._board_surf.width()) / 2
         board_left_top_y = (SCREEN_HEIGHT - self._board_surf.height()) / 2
@@ -117,13 +115,13 @@ class TetrisGame:
 
     def drop_piece_update(self):
         self._drop_piece_y = self._board.drop_height(
-            self._piece_x, self._piece)
+            self._piece_x, self._piece_y, self._piece)
         self._drop_piece_surf.rect.move_ip(
             0, (self._height - (self._drop_piece_y + 4)) * self._board_surf.board_cell_width)
 
     def piece_drop(self):
         new_x = self._piece_x
-        new_y = self._board.drop_height(self._piece_x, self._piece)
+        new_y = self._board.drop_height(self._piece_x, self._piece_y, self._piece)
         if (self._board.is_piece_out_of_bound(new_x, new_y, self._piece) or
                 self._board.did_piece_collided_with_body(new_x, new_y, self._piece)):
             self._board.set_piece(self._piece_x, self._piece_y, self._piece)
@@ -207,6 +205,9 @@ class TetrisGame:
                 self.piece_drop()
             if event.key == K_d:
                 self._debug = ~self._debug
+                self._debug_board_surf.update(
+                    self._board_surf.board_cell_width, self._board, self._debug)
+
         elif event.type == self._PIECEDROP:
             if not self._paused:
                 self.move_piece_down()
@@ -217,9 +218,7 @@ class TetrisGame:
         pass
 
     def on_render(self):
-        if self._debug:
-            self._display_surf.blit(
-                self._debug_board_surf.surf, self._debug_board_surf.rect)
+        self._display_surf.blit(self._debug_board_surf.surf, self._debug_board_surf.rect)
         self._display_surf.blit(self._board_surf.surf, self._board_surf.rect)
         self._display_surf.blit(self._piece_surf.surf, self._piece_surf.rect)
         self._display_surf.blit(

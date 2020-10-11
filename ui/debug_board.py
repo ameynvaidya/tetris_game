@@ -16,8 +16,10 @@ class DebugBoardSprite(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect()
         self.update(cell_width, board)
 
-    def update(self, cell_width: int, board: bo.Board):
+    def update(self, cell_width: int, board: bo.Board, debug=True):
         self.surf.fill((160,160,160))
+        if not debug:
+            return
         width = board.width()
         height = board.height()
         myfont = pygame.font.SysFont('Arial', 15)
