@@ -19,6 +19,8 @@ class Piece:
         self._points = points
         self._next = None
         self._color = color
+        self.x = 4
+        self.y = 16
 
     def setNextRotatedPiece(self, nxt) -> None:
         self._next = nxt

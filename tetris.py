@@ -94,10 +94,11 @@ class TetrisGame:
         self._piece_surf = ui_piece.PieceSprite(
             self._board_surf.board_cell_width,
             self._piece)
-        self._piece_surf.rect.move_ip(
-            self._board_surf.rect.left + 4 * self._board_surf.board_cell_width, self._board_surf.rect.top)
         self._piece_x = 4
         self._piece_y = self._height - 4
+        self._piece_surf.rect.move_ip(
+            self._board_surf.rect.left + self._piece_x * self._board_surf.board_cell_width, self._board_surf.rect.top)
+
         if (self._board.is_piece_out_of_bound(self._piece_x, self._piece_y, self._piece) or
                 self._board.did_piece_collided_with_body(self._piece_x, self._piece_y, self._piece)):
             self._running = False
@@ -111,9 +112,6 @@ class TetrisGame:
         self._drop_piece_surf.rect.move_ip(
             self._board_surf.rect.left + self._piece_x * self._board_surf.board_cell_width, 
             self._board_surf.rect.top)
-        self.drop_piece_update()
-
-    def drop_piece_update(self):
         self._drop_piece_y = self._board.drop_height(
             self._piece_x, self._piece_y, self._piece)
         self._drop_piece_surf.rect.move_ip(
@@ -125,9 +123,8 @@ class TetrisGame:
         if (self._board.is_piece_out_of_bound(new_x, new_y, self._piece) or
                 self._board.did_piece_collided_with_body(new_x, new_y, self._piece)):
             self._board.set_piece(self._piece_x, self._piece_y, self._piece)
-            self._debug_board_surf.update(
-                self._board_surf.board_cell_width, self._board)
-            self._board_surf.update(self._board)
+            self._debug_board_surf.update(self._debug)
+            self._board_surf.update()
             self.piece_init()
             return
         self._piece_x = new_x
@@ -140,9 +137,8 @@ class TetrisGame:
         if (self._board.is_piece_out_of_bound(new_x, new_y, self._piece) or
                 self._board.did_piece_collided_with_body(new_x, new_y, self._piece)):
             self._board.set_piece(self._piece_x, self._piece_y, self._piece)
-            self._debug_board_surf.update(
-                self._board_surf.board_cell_width, self._board)
-            self._board_surf.update(self._board)
+            self._debug_board_surf.update(self._debug)
+            self._board_surf.update()
             self.piece_init()
             return
         self._piece_x = new_x
@@ -205,8 +201,7 @@ class TetrisGame:
                 self.piece_drop()
             if event.key == K_d:
                 self._debug = ~self._debug
-                self._debug_board_surf.update(
-                    self._board_surf.board_cell_width, self._board, self._debug)
+                self._debug_board_surf.update(self._debug)
 
         elif event.type == self._PIECEDROP:
             if not self._paused:

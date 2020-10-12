@@ -1,12 +1,12 @@
 import pygame
-import lib.board as board
-import lib.piece as piece
+import lib.board as b
+import lib.piece as p
 class BoardSprite(pygame.sprite.Sprite):
-    def __init__(self, board: board.Board, screen_width: int, screen_height: int):
+    def __init__(self, board: b.Board, screen_width: int, screen_height: int):
         super(BoardSprite, self).__init__() 
         width = board.width()
         height = board.height()
-
+        self._board = board
         self.board_cell_width = int(screen_height * 0.9 / height)
 
         self._board_display_width = self.board_cell_width * width
@@ -14,11 +14,11 @@ class BoardSprite(pygame.sprite.Sprite):
         self.surf = pygame.Surface(
             (self._board_display_width, self._board_display_height))
         self.rect = self.surf.get_rect()
-        self.update(board)
+        self.update()
 
-    def update(self, board: board.Board) -> None:
-        width = board.width()
-        height = board.height()
+    def update(self) -> None:
+        width = self._board.width()
+        height = self._board.height()
         rect_left = self.surf.get_rect().left
         rect_top = self.surf.get_rect().top
         rect_bottom = self.surf.get_rect().bottom
@@ -31,13 +31,13 @@ class BoardSprite(pygame.sprite.Sprite):
 
         for x in range(width):
             for y in range(height):
-                if (board.get_grid(x, y) != 0):
+                if (self._board.get_grid(x, y) != 0):
                     cell_left = (rect_left + x * self.board_cell_width)
                     cell_top = (rect_top + (height - y - 1)
                                 * self.board_cell_width)
                     pygame.draw.rect(
                         self.surf,
-                        piece.Piece.piece_color_map()[board.get_grid(x, y)],
+                        p.Piece.piece_color_map()[self._board.get_grid(x, y)],
                         (cell_left, cell_top, self.board_cell_width, self.board_cell_width))
 
         # inside grid (for reference)
