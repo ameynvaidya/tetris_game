@@ -17,11 +17,22 @@ class Board:
         # grid is represented as one dimensional list
         self._grid = []
         self.row_stats = []
+
+        self.score = 0
+        self.lines = 0
+
         self._need_to_clear_rows = False
         for _ in range(height * width):
             self._grid.append(0)
         for i in range(height):
             self.row_stats.append(0)
+
+        self._points_table = {
+            1: 40,
+            2: 100,
+            3: 300,
+            4: 1200,
+        }
         
     def height(self) -> int:
         return self._height
@@ -44,12 +55,18 @@ class Board:
         for i in range(self._height):
             temp_row_stats.append(0)
 
+        line_counter = 0
         for from_row in range(self._height):
             if self.row_stats[from_row] != self._width:
                 temp_row_stats[to_row] = self.row_stats[from_row]
                 for i in range(self._width):
                     temp_grid[to_row * self._width + i] = self._grid[from_row * self._width + i]
                 to_row = to_row + 1
+            else:
+                line_counter = line_counter + 1
+        
+        self.lines = self.lines + line_counter
+        self.score = self.score + self._points_table[line_counter]
         self._grid = temp_grid
         self.row_stats = temp_row_stats
         self._need_to_clear_rows = False
