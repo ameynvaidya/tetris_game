@@ -115,3 +115,16 @@ class Board:
         self.set_piece(6, 0, piece.Piece.get_pieces()[6])
         self.set_piece(4, 1, piece.Piece.get_pieces()[3])
         self.set_piece(-1, 2, piece.Piece.get_pieces()[4].nextRotation())
+
+    def get_hole_count(self) -> int:
+        hole_count = 0
+        for x in range(self._width):
+            hole_count_in_col = 0
+            detect_skyline = False
+            for y in range(self._height - 1, -1, -1):
+                if not detect_skyline and self.get_grid(x, y) != 0:
+                    detect_skyline = True
+                elif detect_skyline and self.get_grid(x, y) == 0:
+                    hole_count_in_col = hole_count_in_col + 1
+            hole_count = hole_count + hole_count_in_col
+        return hole_count

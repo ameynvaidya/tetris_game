@@ -122,7 +122,7 @@ class TetrisGame:
                 self._board.did_piece_collided_with_body(self._piece_x, self._piece_y, self._piece)):
             self.on_game_end()
             return
-        self.drop_piece_init()
+        self.drop_piece_render()
 
 
     def update_next_piece(self):
@@ -131,7 +131,7 @@ class TetrisGame:
             self._next_piece)
 
 
-    def drop_piece_init(self):
+    def drop_piece_render(self):
         self._drop_piece_surf = ui_drop_piece.DropPieceSprite(
             self._board_surf.board_cell_width,
             self._piece)
@@ -143,7 +143,8 @@ class TetrisGame:
         self._drop_piece_surf.rect.move_ip(
             0, (self._height - (self._drop_piece_y + 4)) * self._board_surf.board_cell_width)
 
-    def piece_finalize(self):
+    def on_piece_finalize(self):
+        self._board.set_piece(self._piece_x, self._piece_y, self._piece)
         self._debug_board_surf.update(self._debug)
         self._board_surf.update()
         self._score_surf.update()
@@ -151,8 +152,7 @@ class TetrisGame:
 
     def piece_drop(self):
         self._piece_y = self._board.drop_height(self._piece_x, self._piece_y, self._piece)
-        self._board.set_piece(self._piece_x, self._piece_y, self._piece)
-        self.piece_finalize()
+        self.on_piece_finalize()
         return
 
     def move_piece_down(self):
@@ -160,8 +160,7 @@ class TetrisGame:
         new_y = self._piece_y - 1
         if (self._board.is_piece_out_of_bound(new_x, new_y, self._piece) or
                 self._board.did_piece_collided_with_body(new_x, new_y, self._piece)):
-            self._board.set_piece(self._piece_x, self._piece_y, self._piece)
-            self.piece_finalize()
+            self.on_piece_finalize()
             return
         self._piece_x = new_x
         self._piece_y = new_y
@@ -177,7 +176,7 @@ class TetrisGame:
         self._piece_x = new_x
         self._piece_y = new_y
         self._piece_surf.rect.move_ip(-self._board_surf.board_cell_width, 0)
-        self.drop_piece_init()
+        self.drop_piece_render()
 
     def move_piece_right(self):
         new_x = self._piece_x + 1
@@ -189,7 +188,7 @@ class TetrisGame:
         self._piece_x = new_x
         self._piece_y = new_y
         self._piece_surf.rect.move_ip(self._board_surf.board_cell_width, 0)
-        self.drop_piece_init()
+        self.drop_piece_render()
 
     def rotate_piece(self):
         original_location = self._piece_surf.rect
@@ -203,7 +202,7 @@ class TetrisGame:
             self._board_surf.board_cell_width,
             self._piece)
         self._piece_surf.rect = original_location
-        self.drop_piece_init()
+        self.drop_piece_render()
 
     def on_event(self, event):
         if event.type == KEYDOWN:
