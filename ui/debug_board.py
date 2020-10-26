@@ -39,7 +39,7 @@ class DebugBoardSprite(pygame.sprite.Sprite):
             self.surf.blit(row_num_surface, row_num_surface_rect)
 
             row_stat_surface = myfont.render(
-                f"{self._board.row_stats[i]:02d}", False, (255, 0, 0))
+                f"{self._board._commited_grid.row_stats[i]:02d}", False, (255, 0, 0))
             row_stat_surface_rect = row_stat_surface.get_rect()
             row_stat_surface_rect.move_ip(
                 self._cell_width * (width + 1) + 3, (height - i) * self._cell_width)

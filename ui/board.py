@@ -31,13 +31,13 @@ class BoardSprite(pygame.sprite.Sprite):
 
         for x in range(width):
             for y in range(height):
-                if (self._board.get_grid(x, y) != 0):
+                if (self._board.get_grid(x, y, self._board._commited_grid) != 0):
                     cell_left = (rect_left + x * self.board_cell_width)
                     cell_top = (rect_top + (height - y - 1)
                                 * self.board_cell_width)
                     pygame.draw.rect(
                         self.surf,
-                        p.Piece.piece_color_map()[self._board.get_grid(x, y)],
+                        p.Piece.piece_color_map()[self._board.get_grid(x, y, self._board._commited_grid)],
                         (cell_left, cell_top, self.board_cell_width, self.board_cell_width))
 
         # inside grid (for reference)
