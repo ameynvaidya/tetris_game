@@ -142,7 +142,9 @@ class TetrisGame:
             self._piece_x, self._piece_y, self._piece)
         self._drop_piece_surf.rect.move_ip(
             0, (self._height - (self._drop_piece_y + 4)) * self._board_surf.board_cell_width)
+        self._board.set_piece(self._piece_x, self._drop_piece_y, self._piece)
         self._debug_board_surf.update(self._debug)
+        self._board.revert_transaction()
 
     def on_piece_finalize(self):
         self._board.set_piece(self._piece_x, self._piece_y, self._piece)
