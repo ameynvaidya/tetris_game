@@ -119,7 +119,7 @@ class TetrisGame:
             self._board_surf.rect.left + self._piece_x * self._board_surf.board_cell_width, self._board_surf.rect.top)
 
         if (self._board.is_piece_out_of_bound(self._piece_x, self._piece_y, self._piece) or
-                self._board.did_piece_collided_with_body(self._piece_x, self._piece_y, self._piece, self._board._commited_grid)):
+                self._board.did_piece_collided_with_body(self._piece_x, self._piece_y, self._piece)):
             self.on_game_end()
             return
         self.drop_piece_render()
@@ -139,12 +139,13 @@ class TetrisGame:
             self._board_surf.rect.left + self._piece_x * self._board_surf.board_cell_width, 
             self._board_surf.rect.top)
         self._drop_piece_y = self._board.drop_height(
-            self._piece_x, self._piece_y, self._piece, self._board._commited_grid)
+            self._piece_x, self._piece_y, self._piece)
         self._drop_piece_surf.rect.move_ip(
             0, (self._height - (self._drop_piece_y + 4)) * self._board_surf.board_cell_width)
+        self._debug_board_surf.update(self._debug)
 
     def on_piece_finalize(self):
-        self._board.set_piece(self._piece_x, self._piece_y, self._piece, self._board._uncommited_grid)
+        self._board.set_piece(self._piece_x, self._piece_y, self._piece)
         self._board.commit_transaction()
         self._debug_board_surf.update(self._debug)
         self._board_surf.update()
@@ -152,7 +153,7 @@ class TetrisGame:
         self.piece_init()
 
     def piece_drop(self):
-        self._piece_y = self._board.drop_height(self._piece_x, self._piece_y, self._piece, self._board._commited_grid)
+        self._piece_y = self._board.drop_height(self._piece_x, self._piece_y, self._piece)
         self.on_piece_finalize()
         return
 
@@ -160,7 +161,7 @@ class TetrisGame:
         new_x = self._piece_x
         new_y = self._piece_y - 1
         if (self._board.is_piece_out_of_bound(new_x, new_y, self._piece) or
-                self._board.did_piece_collided_with_body(new_x, new_y, self._piece, self._board._commited_grid)):
+                self._board.did_piece_collided_with_body(new_x, new_y, self._piece)):
             self.on_piece_finalize()
             return
         self._piece_x = new_x
@@ -172,7 +173,7 @@ class TetrisGame:
         new_y = self._piece_y
         if (self._board.is_piece_out_of_bound(new_x, new_y, self._piece)):
             return
-        if (self._board.did_piece_collided_with_body(new_x, new_y, self._piece, self._board._commited_grid)):
+        if (self._board.did_piece_collided_with_body(new_x, new_y, self._piece)):
             return
         self._piece_x = new_x
         self._piece_y = new_y
@@ -184,7 +185,7 @@ class TetrisGame:
         new_y = self._piece_y
         if (self._board.is_piece_out_of_bound(new_x, new_y, self._piece)):
             return
-        if (self._board.did_piece_collided_with_body(new_x, new_y, self._piece, self._board._commited_grid)):
+        if (self._board.did_piece_collided_with_body(new_x, new_y, self._piece)):
             return
         self._piece_x = new_x
         self._piece_y = new_y
@@ -196,7 +197,7 @@ class TetrisGame:
         piece_next = self._piece.nextRotation()
         if (self._board.is_piece_out_of_bound(self._piece_x, self._piece_y, piece_next)):
             return
-        if (self._board.did_piece_collided_with_body(self._piece_x, self._piece_y, piece_next, self._board._commited_grid)):
+        if (self._board.did_piece_collided_with_body(self._piece_x, self._piece_y, piece_next)):
             return
         self._piece = piece_next
         self._piece_surf = ui_piece.PieceSprite(
@@ -226,8 +227,9 @@ class TetrisGame:
                 self._debug_board_surf.update(self._debug)
 
         elif event.type == self._PIECEDROP:
-            if not self._paused:
-                self.move_piece_down()
+            # if not self._paused:
+            #     self.move_piece_down()
+            pass
         elif event.type == QUIT:
             self.on_game_end()
 

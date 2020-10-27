@@ -39,8 +39,13 @@ class DebugBoardSprite(pygame.sprite.Sprite):
             self.surf.blit(row_num_surface, row_num_surface_rect)
 
             row_stat_surface = myfont.render(
-                f"{self._board._commited_grid.row_stats[i]:02d}", False, (255, 0, 0))
+                f"{self._board._uncommitted_grid.row_stats[i]:02d}", False, (255, 0, 0))
             row_stat_surface_rect = row_stat_surface.get_rect()
             row_stat_surface_rect.move_ip(
                 self._cell_width * (width + 1) + 3, (height - i) * self._cell_width)
             self.surf.blit(row_stat_surface, row_stat_surface_rect)
+        hole_count = self._board.get_hole_count()
+        hole_count_surface = myfont.render(f"HC:{hole_count}", False, (0, 0, 255))
+        hole_count_rect = hole_count_surface.get_rect()
+        hole_count_rect.move_ip(3, (height + 1) * self._cell_width)
+        self.surf.blit(hole_count_surface, hole_count_rect)

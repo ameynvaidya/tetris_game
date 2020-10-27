@@ -17,8 +17,11 @@ class Board:
         self._height = height
         # grid is represented as one dimensional list
 
-        self._commited_grid = g.Grid(width, height)
-        self._uncommited_grid = g.Grid(width, height)
+        self._committed_grid = g.Grid(width, height)
+        self._uncommitted_grid = g.Grid(width, height)
+
+        self._uncommitted_score = 0
+        self._uncommitted_lines = 0
 
         self.score = 0
         self.lines = 0
@@ -38,7 +41,9 @@ class Board:
     def width(self) -> int:
         return self._width
 
-    def set_piece(self, x: int, y: int, piece: piece.Piece, grid: g.Grid) -> None:
+    def set_piece(self, x: int, y: int, piece: piece.Piece, grid: g.Grid = None) -> None:
+        if grid is None:
+            grid = self._uncommitted_grid
         for point in piece.getBody():
             self.set_grid(x + point.getX(), y +  point.getY(), piece.getColor(), grid)
         if self._need_to_clear_rows:
@@ -57,16 +62,26 @@ class Board:
             else:
                 line_counter = line_counter + 1
         
-        self.lines = self.lines + line_counter
-        self.score = self.score + self._points_table[line_counter]
-        self._uncommited_grid = t_grid
+        self._uncommitted_lines = self._uncommitted_lines + line_counter
+        self._uncommitted_score = self._uncommitted_score + self._points_table[line_counter]
+        self._uncommitted_grid = t_grid
         self._need_to_clear_rows = False
 
     def commit_transaction(self) -> None:
         for i in range(self._width * self._height):
-            self._commited_grid._grid[i] = self._uncommited_grid._grid[i]
+            self._committed_grid._grid[i] = self._uncommitted_grid._grid[i]
         for i in range(self._height):
-            self._commited_grid.row_stats[i] = self._uncommited_grid.row_stats[i]
+            self._committed_grid.row_stats[i] = self._uncommitted_grid.row_stats[i]
+        self.score = self._uncommitted_score
+        self.lines = self._uncommitted_lines
+
+    def revert_transaction(self) -> None:
+        for i in range(self._width * self._height):
+            self._uncommitted_grid._grid[i] = self._committed_grid._grid[i]
+        for i in range(self._height):
+            self._uncommitted_grid.row_stats[i] = self._committed_grid.row_stats[i]
+        self._uncommitted_score = self.score
+        self._uncommitted_lines = self.lines
 
     def is_piece_out_of_bound(self, x: int, y: int, piece: piece.Piece) -> bool:
         for p in piece.getBody():
@@ -76,7 +91,9 @@ class Board:
                 return True
         return False
 
-    def did_piece_collided_with_body(self, x: int, y: int, piece: piece.Piece, grid: g.Grid) -> bool:
+    def did_piece_collided_with_body(self, x: int, y: int, piece: piece.Piece, grid: g.Grid = None) -> bool:
+        if grid is None:
+            grid = self._uncommitted_grid
         for p in piece.getBody():
             p_x = x + p.getX()
             p_y = y + p.getY()
@@ -84,7 +101,9 @@ class Board:
                 return True
         return False
 
-    def drop_height(self, x: int, current_y: int, piece: piece.Piece, grid: g.Grid) -> int:
+    def drop_height(self, x: int, current_y: int, piece: piece.Piece, grid: g.Grid = None) -> int:
+        if grid is None:
+            grid = self._uncommitted_grid
         for y in range(current_y, -4, -1):
             if (self.is_piece_out_of_bound(x, y, piece) or 
                 self.did_piece_collided_with_body(x, y, piece, grid)):
@@ -98,7 +117,9 @@ class Board:
             if grid.row_stats[y] == self._width:
                 self._need_to_clear_rows = True
     
-    def get_grid(self, x: int, y: int, grid: g.Grid) -> int:
+    def get_grid(self, x: int, y: int, grid: g.Grid = None) -> int:
+        if grid is None:
+            grid = self._committed_grid
         if (x >= 0 or x < self._width) and (y >= 0 or y < self._height):
             return grid._grid[y * self._width + x]
         return 0
@@ -118,9 +139,9 @@ class Board:
             hole_count_in_col = 0
             detect_skyline = False
             for y in range(self._height - 1, -1, -1):
-                if not detect_skyline and self.get_grid(x, y) != 0:
+                if not detect_skyline and self.get_grid(x, y, self._uncommitted_grid) != 0:
                     detect_skyline = True
-                elif detect_skyline and self.get_grid(x, y) == 0:
+                elif detect_skyline and self.get_grid(x, y, self._uncommitted_grid) == 0:
                     hole_count_in_col = hole_count_in_col + 1
             hole_count = hole_count + hole_count_in_col
         return hole_count
