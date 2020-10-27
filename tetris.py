@@ -144,7 +144,8 @@ class TetrisGame:
             0, (self._height - (self._drop_piece_y + 4)) * self._board_surf.board_cell_width)
 
     def on_piece_finalize(self):
-        self._board.set_piece(self._piece_x, self._piece_y, self._piece, self._board._commited_grid)
+        self._board.set_piece(self._piece_x, self._piece_y, self._piece, self._board._uncommited_grid)
+        self._board.commit_transaction()
         self._debug_board_surf.update(self._debug)
         self._board_surf.update()
         self._score_surf.update()
