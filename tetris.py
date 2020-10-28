@@ -12,6 +12,7 @@ from pygame.locals import (
     K_ESCAPE,
     K_SPACE,
     KEYDOWN,
+    K_a,
     K_x,
     K_p,
     K_d,
@@ -39,6 +40,7 @@ class TetrisGame:
         self._running = True
         self._paused = False
         self._debug = False
+        self._auto = False
 
         self._display_surf = None
         self._piece_surf = None
@@ -58,6 +60,7 @@ class TetrisGame:
         self._piece_x = 4
         self._piece_y = 10
         self._piece_drop_rate = 1000
+        self._auto_drop_rate = 200
 
         self._brain = brain.Brain(self._board)
 
@@ -78,6 +81,9 @@ class TetrisGame:
 
         self._PIECEDROP = pygame.USEREVENT + 1
         pygame.time.set_timer(self._PIECEDROP, self._piece_drop_rate)
+
+        self._AUTOPLAY = pygame.USEREVENT + 2
+        pygame.time.set_timer(self._AUTOPLAY, self._auto_drop_rate)
 
         self._display_surf = pygame.display.set_mode(
             self.display_size, pygame.HWSURFACE | pygame.DOUBLEBUF)
@@ -126,10 +132,10 @@ class TetrisGame:
                 self._board.did_piece_collided_with_body(self._piece_x, self._piece_y, self._piece)):
             self.on_game_end()
             return
-        (self._ai_piece_x, self._ai_piece_y, self._ai_piece) = self._brain.find_best_position(self._piece, self._piece_x, self._piece_y)
+        (self._ai_piece_x, self._ai_piece_y, self._ai_rotation_count,
+         self._ai_piece) = self._brain.find_best_position(self._piece, self._piece_x, self._piece_y)
         self.drop_piece_render()
         self.ai_piece_render()
-
 
     def update_next_piece(self):
         self._next_piece_surf = ui_next_piece.NextPieceSprite(
@@ -240,11 +246,26 @@ class TetrisGame:
             if event.key == K_d:
                 self._debug = ~self._debug
                 self._debug_board_surf.update(self._debug)
-
+            if event.key == K_a:
+                self._auto = ~self._auto
         elif event.type == self._PIECEDROP:
-            # if not self._paused:
-            #     self.move_piece_down()
-            pass
+            if not self._paused:
+                self.move_piece_down()
+        elif event.type == self._AUTOPLAY:
+            if self._auto:
+                if self._ai_rotation_count > 0:
+                    self.rotate_piece()
+                    self._ai_rotation_count = self._ai_rotation_count - 1
+                move_x = self._ai_piece_x - 4
+                if move_x != 0:
+                    if move_x < 0:
+                        self.move_piece_left()
+                        self._ai_piece_x = self._ai_piece_x + 1
+                    else:
+                        self.move_piece_right()
+                        self._ai_piece_x = self._ai_piece_x - 1
+                if self._ai_rotation_count == 0 and move_x == 0:
+                    self.piece_drop()
         elif event.type == QUIT:
             self.on_game_end()
 
