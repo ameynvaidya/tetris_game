@@ -20,6 +20,8 @@ from pygame.locals import (
 
 import lib.board as board
 import lib.piece as piece
+import lib.brain as brain
+import ui.ai_piece as ui_ai_piece
 import ui.board as ui_board
 import ui.piece as ui_piece
 import ui.score as ui_score
@@ -56,6 +58,8 @@ class TetrisGame:
         self._piece_x = 4
         self._piece_y = 10
         self._piece_drop_rate = 1000
+
+        self._brain = brain.Brain(self._board)
 
         # self._input_piece_order = []
         # if filename:
@@ -122,7 +126,9 @@ class TetrisGame:
                 self._board.did_piece_collided_with_body(self._piece_x, self._piece_y, self._piece)):
             self.on_game_end()
             return
+        (self._ai_piece_x, self._ai_piece_y, self._ai_piece) = self._brain.find_best_position(self._piece, self._piece_x, self._piece_y)
         self.drop_piece_render()
+        self.ai_piece_render()
 
 
     def update_next_piece(self):
@@ -130,6 +136,16 @@ class TetrisGame:
             self._board_surf.board_cell_width,
             self._next_piece)
 
+    def ai_piece_render(self):
+        self._ai_piece_surf = ui_ai_piece.AIPieceSprite(
+            self._board_surf.board_cell_width,
+            self._ai_piece
+        )
+        self._ai_piece_surf.rect.move_ip(
+            self._board_surf.rect.left + self._ai_piece_x * self._board_surf.board_cell_width, 
+            self._board_surf.rect.top)
+        self._ai_piece_surf.rect.move_ip(
+            0, (self._height - (self._ai_piece_y + 4)) * self._board_surf.board_cell_width)
 
     def drop_piece_render(self):
         self._drop_piece_surf = ui_drop_piece.DropPieceSprite(
@@ -142,9 +158,6 @@ class TetrisGame:
             self._piece_x, self._piece_y, self._piece)
         self._drop_piece_surf.rect.move_ip(
             0, (self._height - (self._drop_piece_y + 4)) * self._board_surf.board_cell_width)
-        self._board.set_piece(self._piece_x, self._drop_piece_y, self._piece)
-        self._debug_board_surf.update(self._debug)
-        self._board.revert_transaction()
 
     def on_piece_finalize(self):
         self._board.set_piece(self._piece_x, self._piece_y, self._piece)
@@ -246,6 +259,7 @@ class TetrisGame:
         self._display_surf.blit(self._piece_surf.surf, self._piece_surf.rect)
         self._display_surf.blit(
             self._drop_piece_surf.surf, self._drop_piece_surf.rect)
+        self._display_surf.blit(self._ai_piece_surf.surf, self._ai_piece_surf.rect)
         pygame.display.flip()
         self._clock.tick(FRAMERATE)
 
