@@ -60,7 +60,7 @@ class TetrisGame:
         self._piece_x = 4
         self._piece_y = 10
         self._piece_drop_rate = 1000
-        self._auto_drop_rate = 200
+        self._auto_drop_rate = 10
 
         self._brain = brain.Brain(self._board)
 
@@ -134,8 +134,9 @@ class TetrisGame:
             return
         (self._ai_piece_x, self._ai_piece_y, self._ai_rotation_count,
          self._ai_piece) = self._brain.find_best_position(self._piece, self._piece_x, self._piece_y)
-        self.drop_piece_render()
         self.ai_piece_render()
+        self.drop_piece_render()
+
 
     def update_next_piece(self):
         self._next_piece_surf = ui_next_piece.NextPieceSprite(
@@ -278,9 +279,9 @@ class TetrisGame:
         self._display_surf.blit(self._debug_board_surf.surf, self._debug_board_surf.rect)
         self._display_surf.blit(self._board_surf.surf, self._board_surf.rect)
         self._display_surf.blit(self._piece_surf.surf, self._piece_surf.rect)
+        self._display_surf.blit(self._ai_piece_surf.surf, self._ai_piece_surf.rect)
         self._display_surf.blit(
             self._drop_piece_surf.surf, self._drop_piece_surf.rect)
-        self._display_surf.blit(self._ai_piece_surf.surf, self._ai_piece_surf.rect)
         pygame.display.flip()
         self._clock.tick(FRAMERATE)
 

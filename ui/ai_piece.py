@@ -13,7 +13,7 @@ class AIPieceSprite(pygame.sprite.Sprite):
             point_top = self.rect.top + (4 - point.getY() - 1) * cell_width
             pygame.draw.rect(
                 self.surf, 
-                pc.Piece.piece_color_map()[piece.getColor()],
+                (20,20,20),
                 (point_left, point_top, cell_width, cell_width),
                 2
             )
