@@ -11,7 +11,7 @@ class Brain:
         best_y = piece_y
         best_piece = piece
         best_rotation = 0
-        max_score = -1000
+        max_score = -100000
         temp_piece = piece
         for r in range(4):
             for x in range(-4, self._board.width(), 1):
@@ -33,4 +33,4 @@ class Brain:
         return (best_x, best_y, best_rotation, best_piece)
 
     def find_score(self, y: int) -> int:
-        return -5* self._board.get_hole_count() - 10 * y
+        return -6 * self._board.get_hole_count() - 3 * y - 5 * self._board.get_empty_pillar_count()
