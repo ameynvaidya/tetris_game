@@ -13,6 +13,7 @@ from pygame.locals import (
     K_SPACE,
     KEYDOWN,
     K_a,
+    K_h,
     K_x,
     K_p,
     K_d,
@@ -29,6 +30,7 @@ import ui.score as ui_score
 import ui.next_piece as ui_next_piece
 import ui.drop_piece as ui_drop_piece
 import ui.debug_board as ui_debug_board
+import ui.instructions as ui_instructions
 
 SCREEN_HEIGHT = 480
 SCREEN_WIDTH = 640
@@ -41,6 +43,7 @@ class TetrisGame:
         self._paused = False
         self._debug = False
         self._auto = False
+        self._hint = False
 
         self._display_surf = None
         self._piece_surf = None
@@ -48,6 +51,8 @@ class TetrisGame:
         self._score_surf = None
         self._next_surf = None
         self._hold_piece_surf = None
+        self._instructions_surf = None
+        self._ai_piece_surf = None
 
         self._clock = pygame.time.Clock()
         self._width = width
@@ -94,9 +99,11 @@ class TetrisGame:
             self._board, SCREEN_WIDTH, SCREEN_HEIGHT)
         self._debug_board_surf = ui_debug_board.DebugBoardSprite(
             self._board_surf.board_cell_width, self._board)
-
         self._score_surf = ui_score.ScoreSprite(self._board)
         self._score_surf.rect.move_ip(20, 300)
+        self._instructions_surf = ui_instructions.InstructionsSprite()
+        self._instructions_surf.rect.move_ip(470, 30)
+
 
         debug_board_left_top_x = (
             SCREEN_WIDTH - self._debug_board_surf.rect.width) / 2
@@ -144,6 +151,8 @@ class TetrisGame:
             self._next_piece)
 
     def ai_piece_render(self):
+        if not self._hint:
+            return
         self._ai_piece_surf = ui_ai_piece.AIPieceSprite(
             self._board_surf.board_cell_width,
             self._ai_piece
@@ -249,6 +258,10 @@ class TetrisGame:
                 self._debug_board_surf.update(self._debug)
             if event.key == K_a:
                 self._auto = ~self._auto
+            if event.key == K_h:
+                self._hint = ~self._hint
+                if self._hint:
+                    self.ai_piece_render()
         elif event.type == self._PIECEDROP:
             if not self._paused:
                 self.move_piece_down()
@@ -275,11 +288,13 @@ class TetrisGame:
 
     def on_render(self):
         self._display_surf.blit(self._score_surf.surf, self._score_surf.rect)
+        self._display_surf.blit(self._instructions_surf.surf, self._instructions_surf.rect)
         self._display_surf.blit(self._next_piece_surf.surf, self._next_piece_surf.rect)
         self._display_surf.blit(self._debug_board_surf.surf, self._debug_board_surf.rect)
         self._display_surf.blit(self._board_surf.surf, self._board_surf.rect)
         self._display_surf.blit(self._piece_surf.surf, self._piece_surf.rect)
-        self._display_surf.blit(self._ai_piece_surf.surf, self._ai_piece_surf.rect)
+        if self._ai_piece_surf:
+            self._display_surf.blit(self._ai_piece_surf.surf, self._ai_piece_surf.rect)
         self._display_surf.blit(
             self._drop_piece_surf.surf, self._drop_piece_surf.rect)
         pygame.display.flip()

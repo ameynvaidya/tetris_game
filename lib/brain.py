@@ -1,6 +1,7 @@
 import lib.board as b
 import lib.piece as pc
 
+
 class Brain:
     def __init__(self, board: b.Board):
         super().__init__()
@@ -33,4 +34,4 @@ class Brain:
         return (best_x, best_y, best_rotation, best_piece)
 
     def find_score(self, y: int) -> int:
-        return -6 * self._board.get_hole_count() - 3 * y - 5 * self._board.get_empty_pillar_count()
+        return -3 * self._board.get_hole_count() - 1.2 * y - 3 * self._board.get_empty_pillar_count()

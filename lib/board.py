@@ -161,6 +161,6 @@ class Board:
                         pillar_count_in_col = pillar_count_in_col + 1
                 elif self.get_grid(x + 1, y, self._uncommitted_grid) != 0 and self.get_grid(x - 1, y, self._uncommitted_grid) != 0:
                     pillar_count_in_col = pillar_count_in_col + 1
-                if pillar_count_in_col > 3:
-                    pillar_count = pillar_count + pillar_count_in_col - 3
+            if pillar_count_in_col > 2:
+                pillar_count = pillar_count + pillar_count_in_col
         return pillar_count
