@@ -69,18 +69,6 @@ class TetrisGame:
 
         self._brain = brain.Brain(self._board)
 
-        # self._input_piece_order = []
-        # if filename:
-        #     inp_file = open(filename, "r")
-        #     for row in inp_file:
-        #         self._input_piece_order.append(int(row))
-        #     inp_file.close()
-        # else:
-        #     for _ in range(10000):
-        #         self._input_piece_order.append(random.randrange(7))
-        # self._input_piece_counter = 0
-
-
     def on_init(self):
         pygame.init()
 

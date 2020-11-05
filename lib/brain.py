@@ -27,11 +27,11 @@ class Brain:
                     best_x = x
                     best_y = drop_piece_y
                     best_piece = temp_piece
-                    max_score = score
                     best_rotation = r
+                    max_score = score
                 self._board.revert_transaction()
             temp_piece = temp_piece.nextRotation()
         return (best_x, best_y, best_rotation, best_piece)
 
     def find_score(self, y: int) -> int:
-        return -3 * self._board.get_hole_count() - 1.2 * y - 3 * self._board.get_empty_pillar_count()
+        return -3 *  self._board.get_hole_count() - 1 * y - 3 * self._board.get_empty_pillar_count()
